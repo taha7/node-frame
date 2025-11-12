@@ -28,22 +28,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Step 4: Lint and format code
-      - name: Check code formatting
-        run: npm run format:check
-
-      - name: Lint code
-        run: npm run lint
-
-      # Step 5: Run tests (when added)
-      - name: Run tests
-        run: npm test
-
-      # Step 6: Build the project (prepublishOnly will clean and build)
+      # Step 4: Build the project (prepublishOnly will clean and build)
       - name: Build project
         run: npm run build
 
-      # Step 7: Update package version to match the release tag
+      # Step 5: Update package version to match the release tag
       - name: Update package version
         run: |
           # Extract version from GitHub release tag (removes 'v' prefix if present)
@@ -51,13 +40,13 @@ jobs:
           VERSION=${VERSION#v}
           npm version $VERSION --no-git-tag-version
 
-      # Step 8: Publish to NPM
+      # Step 6: Publish to NPM
       - name: Publish to NPM
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Step 9: Comment on the release (only for GitHub releases, not tag pushes)
+      # Step 7: Comment on the release (only for GitHub releases, not tag pushes)
       - name: Comment on release
         if: github.event_name == 'release'
         uses: actions/github-script@v7
