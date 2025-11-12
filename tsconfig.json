@@ -30,11 +30,13 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
-    "**/*.ts"
+    "*.ts",
+    "examine/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "**/*.d.ts"
   ],
   "ts-node": {
     "esm": false,
