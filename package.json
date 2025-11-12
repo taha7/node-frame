@@ -1,5 +1,5 @@
 {
-  "name": "node-frame",
+  "name": "@taha7/node-frame",
   "version": "1.0.0",
   "description": "A lightweight, Express-like web framework for Node.js built with TypeScript",
   "main": "dist/index.js",
