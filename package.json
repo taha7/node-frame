@@ -24,6 +24,9 @@
     "url": "https://github.com/taha7/node-frame/issues"
   },
   "homepage": "https://github.com/taha7/node-frame#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist/**/*",
     "README.md",
