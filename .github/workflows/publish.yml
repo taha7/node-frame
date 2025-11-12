@@ -38,7 +38,6 @@ jobs:
       # Step 5: Run tests (when added)
       - name: Run tests
         run: npm test
-        continue-on-error: true # Continue even if tests fail for now
 
       # Step 6: Build the project (prepublishOnly will clean and build)
       - name: Build project
