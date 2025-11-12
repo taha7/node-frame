@@ -51,8 +51,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Step 8: Comment on the release (optional)
+      # Step 8: Comment on the release (only for GitHub releases, not tag pushes)
       - name: Comment on release
+        if: github.event_name == 'release'
         uses: actions/github-script@v7
         with:
           script: |
