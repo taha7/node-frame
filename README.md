@@ -75,11 +75,11 @@ app.get('/users/:id', (req, res) => {
 app.get('/users/:userId/posts/:postId', (req, res) => {
   const userId = req.params.get('userId');
   const postId = req.params.get('postId');
-  
-  res.json({ 
-    userId, 
+
+  res.json({
+    userId,
     postId,
-    message: `Post ${postId} from user ${userId}`
+    message: `Post ${postId} from user ${userId}`,
   });
 });
 ```
@@ -186,7 +186,7 @@ app.get('/api/users', (req, res) => {
   // Mock data
   const users = [
     { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
   ];
   res.json({ users, count: users.length });
 });
@@ -200,9 +200,9 @@ app.get('/api/users/:id', (req, res) => {
 app.post('/api/users', (req, res) => {
   // In a real app, you'd parse req.body here
   res.statusCode = 201;
-  res.json({ 
+  res.json({
     message: 'User created successfully',
-    user: { id: Date.now(), name: 'New User' }
+    user: { id: Date.now(), name: 'New User' },
   });
 });
 
@@ -218,10 +218,10 @@ app.use((req, res) => {
 
 // Protected admin routes
 app.get('/api/admin/stats', (req, res) => {
-  res.json({ 
-    totalUsers: 100, 
+  res.json({
+    totalUsers: 100,
     totalPosts: 500,
-    serverUptime: process.uptime()
+    serverUptime: process.uptime(),
   });
 });
 

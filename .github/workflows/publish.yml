@@ -4,14 +4,14 @@ name: Publish to NPM
 on:
   push:
     tags:
-      - 'v*'  # Triggers on version tags like v1.0.0
+      - 'v*' # Triggers on version tags like v1.0.0
   release:
     types: [published]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
@@ -28,16 +28,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Step 4: Run tests (when added)
+      # Step 4: Lint and format code
+      - name: Check code formatting
+        run: npm run format:check
+
+      - name: Lint code
+        run: npm run lint
+
+      # Step 5: Run tests (when added)
       - name: Run tests
         run: npm test
-        continue-on-error: true  # Continue even if tests fail for now
+        continue-on-error: true # Continue even if tests fail for now
 
-      # Step 5: Build the project (prepublishOnly will clean and build)
+      # Step 6: Build the project (prepublishOnly will clean and build)
       - name: Build project
         run: npm run build
 
-      # Step 6: Update package version to match the release tag
+      # Step 7: Update package version to match the release tag
       - name: Update package version
         run: |
           # Extract version from GitHub release tag (removes 'v' prefix if present)
@@ -45,13 +52,13 @@ jobs:
           VERSION=${VERSION#v}
           npm version $VERSION --no-git-tag-version
 
-      # Step 7: Publish to NPM
+      # Step 8: Publish to NPM
       - name: Publish to NPM
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Step 8: Comment on the release (only for GitHub releases, not tag pushes)
+      # Step 9: Comment on the release (only for GitHub releases, not tag pushes)
       - name: Comment on release
         if: github.event_name == 'release'
         uses: actions/github-script@v7

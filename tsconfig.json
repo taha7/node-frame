@@ -29,15 +29,8 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": [
-    "*.ts",
-    "examine/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.d.ts"
-  ],
+  "include": ["*.ts", "examine/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.d.ts"],
   "ts-node": {
     "esm": false,
     "files": true

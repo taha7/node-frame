@@ -11,9 +11,21 @@
     "watch": "nodemon",
     "build:watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "rm -rf dist && npm run build"
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "rm -rf dist && npm run lint && npm run build"
   },
-  "keywords": ["web-framework", "express", "typescript", "nodejs", "http", "server", "middleware"],
+  "keywords": [
+    "web-framework",
+    "express",
+    "typescript",
+    "nodejs",
+    "http",
+    "server",
+    "middleware"
+  ],
   "author": "Taha Mohamed",
   "license": "ISC",
   "repository": {
@@ -34,8 +46,15 @@
   ],
   "type": "commonjs",
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
