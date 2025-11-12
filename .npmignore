@@ -1,0 +1,52 @@
+# Source files
+*.ts
+!*.d.ts
+
+# Development files
+tsconfig.json
+nodemon.json
+.tsbuildinfo
+
+# Test and development directories
+examine/
+test/
+tests/
+__tests__/
+spec/
+specs/
+
+# Development documentation
+test.md
+
+# Node modules and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# CI files (users don't need these)
+.github/
+
+# Build artifacts that shouldn't be published
+dist/.tsbuildinfo
