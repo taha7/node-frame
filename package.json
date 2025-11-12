@@ -27,7 +27,7 @@
     "middleware"
   ],
   "author": "Taha Mohamed",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/taha7/node-frame.git"

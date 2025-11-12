@@ -183,7 +183,7 @@ npm start
 
 ## 📄 License
 
-ISC
+MIT
 
 ## 🤝 Contributing
 
