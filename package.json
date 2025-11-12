@@ -10,7 +10,7 @@
     "dev": "node -r ts-node/register ./examine/server.ts",
     "watch": "nodemon",
     "build:watch": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint . --ext .ts,.js",
     "lint:fix": "eslint . --ext .ts,.js --fix",
     "format": "prettier --write .",
@@ -47,14 +47,17 @@
   "type": "commonjs",
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.10.0",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
