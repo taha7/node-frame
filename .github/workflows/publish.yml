@@ -1,7 +1,10 @@
 name: Publish to NPM
 
-# This workflow runs when you create a new release on GitHub
+# This workflow runs when you push a tag or create a release
 on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0
   release:
     types: [published]
 
