@@ -8,20 +8,23 @@ A lightweight, Express-like web framework for Node.js built with TypeScript. Nod
 - 🔧 **TypeScript First** - Built with TypeScript for excellent developer experience
 - ⚡ **Lightweight** - Minimal dependencies, maximum performance
 - 🛡️ **Type Safe** - Full TypeScript support with proper type inference
-- 🔀 **Middleware Support** - Express-style middleware with execution order
-- 📍 **Route Parameters** - Dynamic route parameters with type safety
-- 📦 **JSON Response** - Built-in JSON response helpers
+- 🔀 **Middleware Support** - Sequential middleware execution
+- 📍 **Route Parameters** - Dynamic route parameters (`:param`)
+- 📦 **JSON Response** - Built-in JSON response helper
+- 🌐 **HTTP Methods** - Support for GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD
 
 ## 📦 Installation
 
-```bash
-npm install node-frame
-```
+\`\`\`bash
+npm install @taha7/node-frame
+\`\`\`
 
 ## 🚀 Quick Start
 
-```typescript
-import app from 'node-frame';
+\`\`\`typescript
+import { App } from '@taha7/node-frame';
+
+const app = new App();
 
 // Basic route
 app.get('/', (req, res) => {
@@ -29,42 +32,48 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
 });
-```
+\`\`\`
 
-## 📖 Usage Examples
+## 📖 API Examples
 
-### Basic Routes
+### HTTP Methods
 
-```typescript
-import app from 'node-frame';
+\`\`\`typescript
+import { App } from '@taha7/node-frame';
 
-// GET route
+const app = new App();
+
+// All HTTP methods are supported
 app.get('/users', (req, res) => {
   res.json({ users: [] });
 });
 
-// POST route
 app.post('/users', (req, res) => {
   res.json({ message: 'User created' });
 });
 
-// Other HTTP methods
+app.put('/users/:id', (req, res) => {
+  const id = req.params.get('id');
+  res.json({ message: \`User \${id} updated\` });
+});
+
 app.patch('/users/:id', (req, res) => {
-  res.json({ message: `Updated user ${req.params.get('id')}` });
+  const id = req.params.get('id');
+  res.json({ message: \`User \${id} patched\` });
 });
 
 app.delete('/users/:id', (req, res) => {
-  res.json({ message: `Deleted user ${req.params.get('id')}` });
+  const id = req.params.get('id');
+  res.json({ message: \`User \${id} deleted\` });
 });
-```
+\`\`\`
 
 ### Route Parameters
 
-```typescript
+\`\`\`typescript
 // Single parameter
 app.get('/users/:id', (req, res) => {
   const userId = req.params.get('id');
@@ -72,227 +81,235 @@ app.get('/users/:id', (req, res) => {
 });
 
 // Multiple parameters
-app.get('/users/:userId/posts/:postId', (req, res) => {
-  const userId = req.params.get('userId');
+app.get('/posts/:postId/comments/:commentId', (req, res) => {
   const postId = req.params.get('postId');
-
-  res.json({
-    userId,
-    postId,
-    message: `Post ${postId} from user ${userId}`,
+  const commentId = req.params.get('commentId');
+  
+  res.json({ 
+    postId, 
+    commentId,
+    message: \`Comment \${commentId} on post \${postId}\` 
   });
 });
-```
+
+// Nested parameters
+app.get('/posts/:id/comments/:commentId/replies', (req, res) => {
+  const postId = req.params.get('id');
+  const commentId = req.params.get('commentId');
+  
+  res.json({ 
+    postId, 
+    commentId, 
+    replies: [] 
+  });
+});
+\`\`\`
 
 ### Middleware
 
-Middleware functions execute in the order they are registered and only affect routes registered **after** them (Express-style behavior).
+Middleware functions execute sequentially for routes registered **after** them:
 
-```typescript
-// Global middleware - affects all routes below
+\`\`\`typescript
+// Global middleware - affects all routes registered below
 app.use((req, res) => {
-  console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);
+  console.log(\`\${req.method} \${req.url} - \${new Date().toISOString()}\`);
 });
 
 app.use((req, res) => {
   res.setHeader('X-Powered-By', 'Node-Frame');
 });
 
-// Routes registered after middleware will be affected
+// Routes registered after middleware are affected
 app.get('/api/users', (req, res) => {
   res.json({ users: [] });
 });
+\`\`\`
 
-// Middleware registered here only affects routes below
-app.use((req, res) => {
-  console.log('This middleware only affects routes registered after this point');
-});
+### Route-Specific Handlers
 
-app.get('/api/admin', (req, res) => {
-  res.json({ admin: true });
-});
-```
+Multiple handlers can be chained for a single route:
 
-### Route-Specific Middleware
-
-```typescript
-// Authentication middleware example
+\`\`\`typescript
+// Authentication middleware
 const authMiddleware = (req, res) => {
-  // Check authentication logic here
   console.log('Checking authentication...');
+  // Auth logic here
 };
 
 const adminMiddleware = (req, res) => {
-  // Check admin permissions
   console.log('Checking admin permissions...');
+  // Admin check here
 };
 
-// Multiple handlers for a single route (middleware + route handler)
+// Multiple handlers for one route
 app.get('/protected', authMiddleware, (req, res) => {
-  res.json({ message: 'This is a protected route' });
+  res.json({ message: 'This is protected' });
 });
 
-// Multiple middleware + handler
+// Chain multiple middleware + final handler
 app.get('/admin', authMiddleware, adminMiddleware, (req, res) => {
-  res.json({ message: 'Admin area' });
+  res.json({ message: 'Admin area', user: 'admin' });
 });
-```
+\`\`\`
 
-### Error Handling
+### JSON Responses
 
-```typescript
-// Basic error handling in routes
+The built-in \`json()\` method automatically sets content-type and serializes data:
+
+\`\`\`typescript
 app.get('/api/data', (req, res) => {
-  try {
-    // Your logic here
-    const data = { message: 'Success' };
-    res.json(data);
-  } catch (error) {
-    res.statusCode = 500;
-    res.json({ error: 'Internal Server Error' });
-  }
+  // Automatically sets Content-Type: application/json
+  res.json({
+    success: true,
+    data: { id: 1, name: 'Example' },
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Error handling middleware
-app.use((req, res) => {
-  console.error(`Error handling request: ${req.method} ${req.url}`);
+app.get('/api/array', (req, res) => {
+  res.json([
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' }
+  ]);
 });
-```
+\`\`\`
 
-### Complete Example
+## 📝 Types
 
-```typescript
-import app from 'node-frame';
+Node Frame is fully typed. Here are the key types:
 
-// Global logging middleware
+\`\`\`typescript
+import { ExtendedRequest, ExtendedResponse, HandlerFn } from '@taha7/node-frame';
+
+// Request with params support
+const handler: HandlerFn = (req: ExtendedRequest, res: ExtendedResponse) => {
+  // req.params.get(key) - Get route parameter
+  // res.json(data) - Send JSON response
+  
+  const id = req.params.get('id'); // string | undefined
+  res.json({ id });
+};
+\`\`\`
+
+## 🔄 Complete Example
+
+\`\`\`typescript
+import { App } from '@taha7/node-frame';
+
+const app = new App();
+
+// Logging middleware
 app.use((req, res) => {
-  console.log(`📝 ${req.method} ${req.url} - ${new Date().toISOString()}`);
+  console.log(\`📝 \${req.method} \${req.url}\`);
 });
 
 // CORS middleware
 app.use((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
 });
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
-});
-
-// API routes
-app.get('/api/users', (req, res) => {
-  // Mock data
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-  ];
-  res.json({ users, count: users.length });
-});
-
-app.get('/api/users/:id', (req, res) => {
-  const userId = req.params.get('id');
-  const user = { id: userId, name: 'John Doe', email: 'john@example.com' };
-  res.json({ user });
-});
-
-app.post('/api/users', (req, res) => {
-  // In a real app, you'd parse req.body here
-  res.statusCode = 201;
-  res.json({
-    message: 'User created successfully',
-    user: { id: Date.now(), name: 'New User' },
-  });
-});
-
-// Authentication middleware (example)
-app.use((req, res) => {
-  // This middleware affects only routes registered below
+// Auth middleware
+const requireAuth = (req, res) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader && req.url?.startsWith('/api/admin')) {
+  if (!authHeader) {
     res.statusCode = 401;
-    return res.json({ error: 'Unauthorized' });
+    res.json({ error: 'Authorization required' });
+    return;
   }
-});
+  console.log('✅ User authenticated');
+};
 
-// Protected admin routes
-app.get('/api/admin/stats', (req, res) => {
-  res.json({
-    totalUsers: 100,
-    totalPosts: 500,
-    serverUptime: process.uptime(),
+// Routes
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Node Frame API',
+    version: '1.0.0',
+    endpoints: ['/api/users', '/api/posts/:id']
   });
 });
 
-// 404 handler (put this last)
-app.get('*', (req, res) => {
-  res.statusCode = 404;
-  res.json({ error: 'Route not found' });
+app.get('/api/users', requireAuth, (req, res) => {
+  res.json({
+    users: [
+      { id: 1, name: 'Alice', email: 'alice@example.com' },
+      { id: 2, name: 'Bob', email: 'bob@example.com' }
+    ]
+  });
+});
+
+app.get('/api/posts/:id', (req, res) => {
+  const postId = req.params.get('id');
+  res.json({
+    id: postId,
+    title: \`Post \${postId}\`,
+    content: 'This is a sample post',
+    author: 'Node Frame'
+  });
+});
+
+app.post('/api/posts', requireAuth, (req, res) => {
+  res.json({
+    message: 'Post created successfully',
+    id: Math.floor(Math.random() * 1000)
+  });
 });
 
 // Start server
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
+  console.log(\`🚀 Node Frame server running on http://localhost:\${PORT}\`);
 });
-```
+\`\`\`
 
 ## 🔧 API Reference
 
 ### App Methods
 
-- `app.get(path, ...handlers)` - Register GET route
-- `app.post(path, ...handlers)` - Register POST route
-- `app.patch(path, ...handlers)` - Register PATCH route
-- `app.put(path, ...handlers)` - Register PUT route
-- `app.delete(path, ...handlers)` - Register DELETE route
-- `app.options(path, ...handlers)` - Register OPTIONS route
-- `app.use(...middlewares)` - Register middleware
-- `app.listen(port, callback)` - Start server
+- \`app.get(path, ...handlers)\` - Register GET route
+- \`app.post(path, ...handlers)\` - Register POST route
+- \`app.patch(path, ...handlers)\` - Register PATCH route
+- \`app.put(path, ...handlers)\` - Register PUT route
+- \`app.delete(path, ...handlers)\` - Register DELETE route
+- \`app.options(path, ...handlers)\` - Register OPTIONS route
+- \`app.use(...middlewares)\` - Register middleware
+- \`app.listen(port, callback)\` - Start server
 
 ### Request Object (Extended)
 
-- `req.method` - HTTP method
-- `req.url` - Request URL
-- `req.headers` - Request headers
-- `req.params` - Route parameters Map
-- `req.params.get(key)` - Get route parameter
+- \`req.method\` - HTTP method
+- \`req.url\` - Request URL
+- \`req.headers\` - Request headers
+- \`req.params\` - Route parameters Map
+- \`req.params.get(key)\` - Get route parameter
 
 ### Response Object (Extended)
 
-- `res.json(data)` - Send JSON response
-- `res.statusCode` - Set status code
-- `res.setHeader(name, value)` - Set response header
-- `res.end(data)` - End response
+- \`res.json(data)\` - Send JSON response
+- \`res.statusCode\` - Set status code
+- \`res.setHeader(name, value)\` - Set response header
+- \`res.end(data)\` - End response
 
 ## 🛠️ Development
 
-```bash
+\`\`\`bash
 # Install dependencies
 npm install
 
 # Start development server
-npm run watch
+npm run dev
 
 # Build TypeScript
 npm run build
 
 # Run built server
 npm start
-```
+\`\`\`
+
+## 📄 License
+
+ISC
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- Inspired by Express.js
-- Built with TypeScript and Node.js
