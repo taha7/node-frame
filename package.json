@@ -11,7 +11,7 @@
     "watch": "nodemon",
     "build:watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "keywords": ["web-framework", "express", "typescript", "nodejs", "http", "server", "middleware"],
   "author": "Taha Mohamed",
